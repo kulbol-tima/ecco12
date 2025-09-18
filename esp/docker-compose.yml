@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  esp-app:
+    build:
+      context: ..
+      dockerfile: ./esp/Dockerfile
+    container_name: esp-app
+    env_file:
+      - ../.env
+    environment:
+      ESP_SERVER_PORT: ${ESP_SERVER_PORT}
+      ESP_DB_URL: ${ESP_DB_URL}
+      ESP_DB_USER: ${ESP_DB_USER}
+      ESP_DB_PASS: ${ESP_DB_PASS}
+    ports:
+      - "${ESP_SERVER_PORT:-8081}:${ESP_SERVER_PORT:-8081}"
+    networks:
+      - esp-network
+    restart: unless-stopped
+
+networks:
+  esp-network:
+    driver: bridge

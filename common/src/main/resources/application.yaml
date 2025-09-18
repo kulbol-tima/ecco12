@@ -1,0 +1,46 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  application:
+    name: Common
+
+  datasource:
+    common:
+      jdbc-url: ${COMMON_DB_URL}
+      username: ${COMMON_DB_USER}
+      password: ${COMMON_DB_PASS}
+      driver-class-name: org.postgresql.Driver
+
+    integration:
+      jdbc-url: ${INTEGRATION_DB_URL}
+      username: ${INTEGRATION_DB_USER}
+      password: ${INTEGRATION_DB_PASS}
+      driver-class-name: org.postgresql.Driver
+
+  jpa:
+    common:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      properties:
+        hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+    integration:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      properties:
+        hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  servlet:
+    context-path: /api/common
+  port: ${COMMON_SERVER_PORT}
+
+
+integration-api:
+  base-url: ${INTEGRATION_API_BASE_URL}
+  x-api-key: ${INTEGRATION_API_X_API_KEY}
+  user-name: ${INTEGRATION_API_USER_NAME}
+  role-name: ${INTEGRATION_API_ROLE_NAME}

@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  ubk-app:
+    build:
+      context: ..
+      dockerfile: ./ubk/Dockerfile
+    container_name: ubk-app
+    env_file:
+      - ../.env
+    environment:
+      UBK_SERVER_PORT: ${UBK_SERVER_PORT}
+      UBK_DB_URL: ${UBK_DB_URL}
+      UBK_DB_USER: ${UBK_DB_USER}
+      UBK_DB_PASS: ${UBK_DB_PASS}
+      COMMON_DB_URL: ${COMMON_DB_URL}
+      COMMON_DB_USER: ${COMMON_DB_USER}
+      COMMON_DB_PASS: ${COMMON_DB_PASS}
+      INTEGRATION_API_BASE_URL: ${INTEGRATION_API_BASE_URL}
+      INTEGRATION_API_X_API_KEY: ${INTEGRATION_API_X_API_KEY}
+      INTEGRATION_API_USER_NAME: ${INTEGRATION_API_USER_NAME}
+      INTEGRATION_API_ROLE_NAME: ${INTEGRATION_API_ROLE_NAME}
+    ports:
+      - "${UBK_PORT:-8083}:${UBK_SERVER_PORT:-8083}"
+    networks:
+      - ubk-network
+    restart: unless-stopped
+
+networks:
+  ubk-network:
+    driver: bridge

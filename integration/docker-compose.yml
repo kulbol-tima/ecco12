@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  integration-app:
+    build:
+      context: ..
+      dockerfile: ./integration/Dockerfile
+    container_name: integration-app
+    env_file:
+      - ../.env
+    environment:
+      INTEGRATION_SERVER_PORT: ${INTEGRATION_SERVER_PORT}
+      INTEGRATION_DB_URL: ${INTEGRATION_DB_URL}
+      INTEGRATION_DB_USER: ${INTEGRATION_DB_USER}
+      INTEGRATION_DB_PASS: ${INTEGRATION_DB_PASS}
+      INTEGRATION_API_BASE_URL: ${INTEGRATION_API_BASE_URL}
+      INTEGRATION_API_X_API_KEY: ${INTEGRATION_API_X_API_KEY}
+      INTEGRATION_API_USER_NAME: ${INTEGRATION_API_USER_NAME}
+      INTEGRATION_API_ROLE_NAME: ${INTEGRATION_API_ROLE_NAME}
+    ports:
+      - "${INTEGRATION_SERVER_PORT:-8082}:${INTEGRATION_SERVER_PORT:-8082}"
+    networks:
+      - integration-network
+    restart: unless-stopped
+
+networks:
+  integration-network:
+    driver: bridge

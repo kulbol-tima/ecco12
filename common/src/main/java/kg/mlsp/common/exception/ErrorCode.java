@@ -1,0 +1,15 @@
+package kg.mlsp.common.exception;
+
+public enum ErrorCode {
+    INTERNAL_SERVER_ERROR,
+    BAD_REQUEST,
+    UNAUTHORIZED,
+    FORBIDDEN,
+    NOT_FOUND,
+    METHOD_NOT_ALLOWED,
+    TOKEN_EXPIRED,
+    ACCESS_DENIED,
+    EXTERNAL_SERVICE_UNAVAILABLE,
+    TIMEOUT,
+    SERVICE_COMMUNICATION_ERROR
+}

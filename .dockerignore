@@ -1,0 +1,40 @@
+# Игнорируем ненужные файлы для ускорения сборки
+target/
+*.jar
+*.war
+*.ear
+*.class
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# IDE файлы
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Git файлы
+.git/
+.gitignore
+
+# Maven файлы
+.mvn/
+mvnw
+mvnw.cmd
+
+# Docker файлы
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Документация
+README.md
+*.md
+
+# Временные файлы
+*.tmp
+*.temp

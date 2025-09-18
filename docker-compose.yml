@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  # Модуль Common
+  common-app:
+    build:
+      context: .
+      dockerfile: ./common/Dockerfile
+    container_name: common-app
+    env_file: .env
+    environment:
+      COMMON_SERVER_PORT: ${COMMON_SERVER_PORT}
+      COMMON_DB_URL: ${COMMON_DB_URL}
+      COMMON_DB_USER: ${COMMON_DB_USER}
+      COMMON_DB_PASS: ${COMMON_DB_PASS}
+      INTEGRATION_API_BASE_URL: ${INTEGRATION_API_BASE_URL}
+      INTEGRATION_API_X_API_KEY: ${INTEGRATION_API_X_API_KEY}
+      INTEGRATION_API_USER_NAME: ${INTEGRATION_API_USER_NAME}
+      INTEGRATION_API_ROLE_NAME: ${INTEGRATION_API_ROLE_NAME}
+    ports:
+      - "${COMMON_SERVER_PORT:-8080}:${COMMON_SERVER_PORT:-8080}"
+    depends_on:
+      - integration-app
+    networks:
+      - esso-network
+    restart: unless-stopped
+
+  # Модуль ESP
+  esp-app:
+    build:
+      context: .
+      dockerfile: ./esp/Dockerfile
+    container_name: esp-app
+    env_file: .env
+    environment:
+      ESP_SERVER_PORT: ${ESP_SERVER_PORT}
+      ESP_DB_URL: ${ESP_DB_URL}
+      ESP_DB_USER: ${ESP_DB_USER}
+      ESP_DB_PASS: ${ESP_DB_PASS}
+    ports:
+      - "${ESP_PORT:-8081}:${ESP_SERVER_PORT:-8081}"
+    depends_on:
+      - common-app
+    networks:
+      - esso-network
+    restart: unless-stopped
+
+  # Модуль Integration
+  integration-app:
+    build:
+      context: .
+      dockerfile: ./integration/Dockerfile
+    container_name: integration-app
+    env_file: .env
+    environment:
+      INTEGRATION_SERVER_PORT: ${INTEGRATION_SERVER_PORT}
+      INTEGRATION_DB_URL: ${INTEGRATION_DB_URL}
+      INTEGRATION_DB_USER: ${INTEGRATION_DB_USER}
+      INTEGRATION_DB_PASS: ${INTEGRATION_DB_PASS}
+      INTEGRATION_API_BASE_URL: ${INTEGRATION_API_BASE_URL}
+      INTEGRATION_API_X_API_KEY: ${INTEGRATION_API_X_API_KEY}
+      INTEGRATION_API_USER_NAME: ${INTEGRATION_API_USER_NAME}
+      INTEGRATION_API_ROLE_NAME: ${INTEGRATION_API_ROLE_NAME}
+    ports:
+      - "${INTEGRATION_PORT:-8082}:${INTEGRATION_SERVER_PORT:-8082}"
+    networks:
+      - esso-network
+    restart: unless-stopped
+
+  # Модуль UBK
+  ubk-app:
+    build:
+      context: .
+      dockerfile: ./ubk/Dockerfile
+    container_name: ubk-app
+    env_file: .env
+    environment:
+      UBK_SERVER_PORT: ${UBK_SERVER_PORT}
+      UBK_DB_URL: ${UBK_DB_URL}
+      UBK_DB_USER: ${UBK_DB_USER}
+      UBK_DB_PASS: ${UBK_DB_PASS}
+      COMMON_DB_URL: ${COMMON_DB_URL}
+      COMMON_DB_USER: ${COMMON_DB_USER}
+      COMMON_DB_PASS: ${COMMON_DB_PASS}
+      INTEGRATION_API_BASE_URL: ${INTEGRATION_API_BASE_URL}
+      INTEGRATION_API_X_API_KEY: ${INTEGRATION_API_X_API_KEY}
+      INTEGRATION_API_USER_NAME: ${INTEGRATION_API_USER_NAME}
+      INTEGRATION_API_ROLE_NAME: ${INTEGRATION_API_ROLE_NAME}
+    ports:
+      - "${UBK_PORT:-8083}:${UBK_SERVER_PORT:-8083}"
+    depends_on:
+      - common-app
+      - integration-app
+    networks:
+      - esso-network
+    restart: unless-stopped
+
+networks:
+  esso-network:
+    driver: bridge

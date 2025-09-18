@@ -1,0 +1,47 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+  application:
+    name: Integration
+  web:
+    locale: en
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: non_null
+
+  datasource:
+    integration:
+      jdbc-url: ${INTEGRATION_DB_URL}
+      username: ${INTEGRATION_DB_USER}
+      password: ${INTEGRATION_DB_PASS}
+      driver-class-name: org.postgresql.Driver
+
+  jpa:
+    integration:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      properties:
+        hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  servlet:
+    context-path: /api/integration
+  port: ${INTEGRATION_SERVER_PORT}
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /swagger-ui
+  api-docs:
+    path: /v3/api-docs
+  override-with-generic-response: false
+
+
+integration-api:
+  base-url: ${INTEGRATION_API_BASE_URL}
+  x-api-key: ${INTEGRATION_API_X_API_KEY}
+  user-name: ${INTEGRATION_API_USER_NAME}
+  role-name: ${INTEGRATION_API_ROLE_NAME}
+
