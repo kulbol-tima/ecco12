@@ -32,7 +32,7 @@ public class SfGetPensionInfoResponseDto {
     @JsonProperty("Issuer")
     private String issuer;
 
-    @JsonProperty("DossierInfoes")
-    private List<DossierInfoDto> dossierInfoes;
+    @JsonProperty("DossierInfos")
+    private List<DossierInfoDto> dossierInfos;
 
 }
