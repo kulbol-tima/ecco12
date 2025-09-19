@@ -121,7 +121,7 @@ public class PersonServiceImp  implements PersonService {
             return newPerson;
         }
 
-        throw new kg.mlsp.common.exception.ApiException(kg.mlsp.common.exception.ErrorCode.NOT_FOUND, "Person data not found in ZAGS");
+        throw new RuntimeException("Записей из ЗАГС не найдено");
     }
 
 
@@ -168,7 +168,7 @@ public class PersonServiceImp  implements PersonService {
 
         newPerson.setSurname(capitalize(passportData.getSurname()));
         newPerson.setName(capitalize(passportData.getName()));
-        newPerson.setPatronymic(capitalize(passportData.getPatronymic()));
+        newPerson.setPatronymic(capitalize(capitalize(passportData.getPatronymic())));
         newPerson.setNationality(capitalize(passportData.getNationality()));
         newPerson.setDateOfBirth(DataFormatterUtils.formatStringToDate(passportData.getDateOfBirth()));
         newPerson.setPassportSeries(passportData.getPassportSeries());
@@ -212,7 +212,7 @@ public class PersonServiceImp  implements PersonService {
         newPerson.setRefGender(gender);
         newPerson.setRefMaritalStatus(maritalStatus);
 
-        if (zagsData.getDeathDate() != null && !zagsData.getDeathDate().isBlank()) {
+        if (zagsData.getDeathDate() != "") {
             newPerson.setDeathDate(DataFormatterUtils.formatStringToDate(zagsData.getDeathDate()));
         }
 

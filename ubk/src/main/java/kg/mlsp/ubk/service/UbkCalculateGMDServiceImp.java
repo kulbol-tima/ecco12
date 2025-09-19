@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Slf4j
 @Service
@@ -18,7 +19,7 @@ public class UbkCalculateGMDServiceImp implements UbkCalculateGMDService {
     private final UbkApplicationRepository applicationRepository;
 
     @Override
-    public Double calculateGMD(Integer applicationId) {
+    public BigDecimal calculateGMD(Integer applicationId) {
         var application = applicationRepository.findById(applicationId).orElseThrow(()
                 -> new ApiException(ErrorCode.NOT_FOUND, String.format(ErrorMessage.APPLICATION_NOT_FOUND, applicationId)));
 
@@ -26,14 +27,14 @@ public class UbkCalculateGMDServiceImp implements UbkCalculateGMDService {
         var members = application.getFamilyMembers();
 
         var totalIncome = incomes.stream()
-                .mapToDouble(income -> income.getAmount() != null ? income.getAmount().doubleValue() : 0)
-                .sum();
+                .map(income -> income.getAmount() != null ? income.getAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (members != null && !members.isEmpty()) {
-            var gmd = totalIncome / members.size();
-            return BigDecimal.valueOf(gmd).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            var gmd = totalIncome.divide(new BigDecimal(members.size()), 2, RoundingMode.HALF_EVEN);
+            return gmd;
         }
 
-        return 0.0;
+        return BigDecimal.ZERO;
     }
 }

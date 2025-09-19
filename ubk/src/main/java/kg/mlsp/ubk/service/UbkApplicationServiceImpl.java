@@ -116,7 +116,7 @@ public class UbkApplicationServiceImpl implements UbkApplicationService {
         application.setAttachmentsCount(createDto.getAttachmentsCount());
         application = ubkApplicationRepository.save(application);
 
-        log.info("Updated application with ID: {}", application.getId());
+        log.info("Created application with ID: {}", application.getId());
 
         return applicationMapper.toDto(application);
     }

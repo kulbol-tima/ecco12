@@ -61,23 +61,15 @@ public class ZagsDataByPinResponseDto {
 
 
     @JsonIgnore
-    public Integer getGenderId() {
-        if ("1".equals(gender)) {
-            return 1; // Male
-        } else if ("2".equals(gender)) {
-            return 2; // Female
-        }
-        return null; // Or some default/error value
+    public Integer getGenderId()
+    {
+        return Objects.equals(gender, "1") ? 1 : 2;
     }
 
     @JsonIgnore
-    public String getGenderCode() {
-        if ("1".equals(gender)) {
-            return "M"; // Male
-        } else if ("2".equals(gender)) {
-            return "F"; // Female
-        }
-        return null; // Or some default/error value
+    public String getGenderCode()
+    {
+        return Objects.equals(gender, "1") ? "F" : "M";
     }
 
     @JsonIgnore

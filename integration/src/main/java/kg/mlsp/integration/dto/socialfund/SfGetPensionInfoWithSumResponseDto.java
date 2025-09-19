@@ -35,7 +35,7 @@ public class SfGetPensionInfoWithSumResponseDto {
     @JsonProperty("Issuer")
     private String issuer;
 
-    @JsonProperty("DossierInfos")
-    private List<DossierInfoWithSumDto> dossierInfos;
+    @JsonProperty("DossierInfoes")
+    private List<DossierInfoWithSumDto> dossierInfoes;
 
 }

@@ -1,5 +1,7 @@
 package kg.mlsp.ubk.service;
+import java.math.BigDecimal;
+
 public interface UbkCalculateGMDService {
-    Double calculateGMD(Integer applicationId);
+    BigDecimal calculateGMD(Integer applicationId);
 
 }
