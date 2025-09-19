@@ -14,7 +14,7 @@ public interface UbkApplicationRepository extends JpaRepository<UbkApplication, 
 
     // Получить последнюю заявку по дате (если есть)
     // Проверка на дублирование по ПИН заявителя и ПИН членов семьи
-    @Query("SELECT a FROM UbkApplication a " +
+    @Query("SELECT DISTINCT a FROM UbkApplication a " +
             "LEFT JOIN a.familyMembers fm " +
             "WHERE (a.applicantPin = :applicantPin OR fm.familyMemberPin = :applicantPin) " +
             "AND a.statusId IN :activeStatuses " +
