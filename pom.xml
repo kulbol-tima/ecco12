@@ -23,6 +23,7 @@
 		<module>common</module>
 		<module>ubk</module>
 		<module>esp</module>
+		<module>security</module>
 	</modules>
 
 

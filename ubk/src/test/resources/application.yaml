@@ -1,0 +1,47 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    ubk:
+      jdbc-url: jdbc:h2:mem:ubkdb;DB_CLOSE_DELAY=-1
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+    common:
+      jdbc-url: jdbc:h2:mem:commondb;DB_CLOSE_DELAY=-1
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+    integration:
+      jdbc-url: jdbc:h2:mem:integrationdb;DB_CLOSE_DELAY=-1
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+  jpa:
+    ubk:
+      hibernate:
+        ddl-auto: create-drop
+      show-sql: true
+      properties:
+        hibernate.dialect: org.hibernate.dialect.H2Dialect
+    common:
+      hibernate:
+        ddl-auto: create-drop
+      show-sql: true
+      properties:
+        hibernate.dialect: org.hibernate.dialect.H2Dialect
+    integration:
+      hibernate:
+        ddl-auto: create-drop
+      show-sql: true
+      properties:
+        hibernate.dialect: org.hibernate.dialect.H2Dialect
+
+server:
+  port: 8082
+
+integration-api:
+  base-url: http://localhost:8081
+  x-api-key: test-key
+  user-name: test-user
+  role-name: test-role

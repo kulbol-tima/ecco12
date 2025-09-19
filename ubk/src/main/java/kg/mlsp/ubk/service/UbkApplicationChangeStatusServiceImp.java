@@ -46,7 +46,7 @@ public class UbkApplicationChangeStatusServiceImp implements UbkApplicationChang
             checkPersonDocumentIsValid(applicationId, changeStatusDto);
         }
 
-        application.setStatusId(changeStatusDto.getStatusId());
+        application.setStatusId(changeStatusDto.getOldStatusId());
         ubkApplicationRepository.save(application);
         ubkApplicationHistoryService.saveHistory(application.getId(), changeStatusDto);
 
