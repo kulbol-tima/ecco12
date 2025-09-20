@@ -46,16 +46,7 @@ public class PersonServiceImp  implements PersonService {
 
     @Override
     public RegPerson createPerson(PersonFindDto personFindDto) {
-
-        RefDocumentSerial documentSerial = documentSerialRepository.findById(personFindDto.getDocumentSerialId()).orElseThrow(
-                () -> new RuntimeException("Document serial not found")
-        );
-
-        var existPerson = personRepository.findOneByPinAndRefDocumentSerialAndPassportNumber(
-                personFindDto.getPin(),
-                documentSerial,
-                personFindDto.getDocumentNumber()
-        );
+        RegPerson existPerson = findExistingPerson(personFindDto);
         if (existPerson != null) {
             return existPerson;
         }
@@ -63,6 +54,9 @@ public class PersonServiceImp  implements PersonService {
         PassportByPsnResponseDto passportData;
 
         try {
+            RefDocumentSerial documentSerial = documentSerialRepository.findById(personFindDto.getDocumentSerialId()).orElseThrow(
+                    () -> new RuntimeException("Document serial not found")
+            );
             passportData = passportFeignClient.getDataByPsn(
                     personFindDto.getPin(),
                     documentSerial.getCode(),
@@ -70,7 +64,7 @@ public class PersonServiceImp  implements PersonService {
             );
 
             RegPerson newPerson = mapPersonPassportData(passportData);
-            newPerson.setRefDocumentSerial(documentSerial);
+            newPerson.setRefDocumentSerial(documentSerialRepository.findById(personFindDto.getDocumentSerialId()).orElse(null));
             newPerson.setIsPassportData(true);
             newPerson.setIsActive(true);
 
@@ -87,23 +81,13 @@ public class PersonServiceImp  implements PersonService {
 
         }catch (Exception e){
             log.error("Error fetching passport data: {}", e.getMessage());
-
             return createPersonFromZags(personFindDto);
-
         }
     }
+
     @Override
     public RegPerson createPersonFromZags(PersonFindDto personFindDto) {
-
-        RefDocumentSerial documentSerial = documentSerialRepository.findById(personFindDto.getDocumentSerialId()).orElseThrow(
-                () -> new RuntimeException("Document serial not found")
-        );
-
-        var existPerson = personRepository.findOneByPinAndRefDocumentSerialAndPassportNumber(
-                personFindDto.getPin(),
-                documentSerial,
-                personFindDto.getDocumentNumber()
-        );
+        RegPerson existPerson = findExistingPerson(personFindDto);
         if (existPerson != null) {
             return existPerson;
         }
@@ -112,18 +96,26 @@ public class PersonServiceImp  implements PersonService {
         if(zagsData != null){
             RegPerson newPerson = mapPersonZagsData(zagsData);
             newPerson.setPassportNumber(personFindDto.getDocumentNumber());
-            newPerson.setRefDocumentSerial(documentSerial);
+            newPerson.setRefDocumentSerial(documentSerialRepository.findById(personFindDto.getDocumentSerialId()).orElse(null));
             newPerson.setIsPassportData(false);
             newPerson.setIsActive(true);
-
             setPersonIdentity(newPerson);
-
             return newPerson;
         }
 
         throw new RuntimeException("Записей из ЗАГС не найдено");
     }
 
+    private RegPerson findExistingPerson(PersonFindDto personFindDto) {
+        RefDocumentSerial documentSerial = documentSerialRepository.findById(personFindDto.getDocumentSerialId()).orElseThrow(
+                () -> new RuntimeException("Document serial not found")
+        );
+        return personRepository.findOneByPinAndRefDocumentSerialAndPassportNumber(
+                personFindDto.getPin(),
+                documentSerial,
+                personFindDto.getDocumentNumber()
+        );
+    }
 
     private ZagsDataByPinResponseDto getZagsData(String pin) {
         try {
@@ -135,11 +127,10 @@ public class PersonServiceImp  implements PersonService {
     }
 
     private void setPersonIdentity(RegPerson newPerson) {
-
         var personList = personRepository.findAllByPinAndIsActive(newPerson.getPin(), true);
-        if (personList != null && personList.iterator().hasNext()) {
+        if (personList != null) {
             for (RegPerson person : personList) {
-                if (!person.getId().equals(newPerson.getId())) {
+                if (newPerson.getId() == null || !person.getId().equals(newPerson.getId())) {
                     person.setIsActive(false);
                     personRepository.save(person);
                 }
@@ -156,19 +147,20 @@ public class PersonServiceImp  implements PersonService {
         personRepository.save(newPerson);
     }
 
-
-
     public RegPerson mapPersonPassportData(PassportByPsnResponseDto passportData)
     {
         RefGender gender = genderRepository.findById(passportData.getGenderId()).orElse(null);
-        RefNationality refNationality = nationalityRepository.findOneByCode(passportData.getNationality().toLowerCase());
+        RefNationality refNationality = null;
+        if (passportData.getNationality() != null) {
+            refNationality = nationalityRepository.findOneByCode(passportData.getNationality().toLowerCase());
+        }
 
         RegPerson newPerson = new RegPerson();
         newPerson.setPin(passportData.getPin());
 
         newPerson.setSurname(capitalize(passportData.getSurname()));
         newPerson.setName(capitalize(passportData.getName()));
-        newPerson.setPatronymic(capitalize(capitalize(passportData.getPatronymic())));
+        newPerson.setPatronymic(capitalize(passportData.getPatronymic()));
         newPerson.setNationality(capitalize(passportData.getNationality()));
         newPerson.setDateOfBirth(DataFormatterUtils.formatStringToDate(passportData.getDateOfBirth()));
         newPerson.setPassportSeries(passportData.getPassportSeries());
@@ -212,12 +204,11 @@ public class PersonServiceImp  implements PersonService {
         newPerson.setRefGender(gender);
         newPerson.setRefMaritalStatus(maritalStatus);
 
-        if (zagsData.getDeathDate() != "") {
+        if (zagsData.getDeathDate() != null && !zagsData.getDeathDate().isEmpty()) {
             newPerson.setDeathDate(DataFormatterUtils.formatStringToDate(zagsData.getDeathDate()));
         }
 
         return newPerson;
-
     }
 
     private String capitalize(String value) {

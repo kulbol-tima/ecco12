@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class RequestUtils {
 
+    private static final String IP_V6_LOCALHOST = "0:0:0:0:0:0:0:1";
+    private static final String IP_V4_LOCALHOST = "127.0.0.1";
+
     public static String getClientIp() {
         ServletRequestAttributes attrs =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -21,8 +24,8 @@ public class RequestUtils {
 
         String ip = (xfHeader == null) ? request.getRemoteAddr() : xfHeader.split(",")[0].trim();
 
-        if ("0:0:0:0:0:0:0:1".equals(ip)) {
-            ip = "127.0.0.1"; // normalize IPv6 localhost
+        if (IP_V6_LOCALHOST.equals(ip)) {
+            ip = IP_V4_LOCALHOST; // normalize IPv6 localhost
         }
 
         return ip;
