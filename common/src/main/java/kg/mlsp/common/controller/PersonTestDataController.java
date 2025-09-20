@@ -6,6 +6,7 @@ import kg.mlsp.common.model.RegPerson;
 import kg.mlsp.common.service.PersonTestDataService;
 import kg.mlsp.integration.dto.passportinfo.PassportByPsnResponseDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/person-test-data")
 @Tag(name = "Person", description = "Person Test Data Management")
+@Profile("!prod")
 public class PersonTestDataController {
     private final PersonTestDataService personTestDataService;
 

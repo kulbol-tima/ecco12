@@ -45,3 +45,6 @@ integration-api:
   x-api-key: test-key
   user-name: test-user
   role-name: test-role
+
+crypto:
+  key: 12345678901234567890123456789012
